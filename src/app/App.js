@@ -8,9 +8,23 @@ import {ajax} from 'rxjs/ajax';
 import _ from 'lodash';
 
 import {createAction} from './store/actionCreators';
-import {Box, Button, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup} from '@material-ui/core';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Table,
+  TableBody,
+  TableHead
+} from '@material-ui/core';
 import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
 import Checkbox from '@material-ui/core/Checkbox';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 
 const initialState = {
   report: []
@@ -53,6 +67,21 @@ const app = ({generateCfdReport, report}) => {
     setItems(v);
   };
 
+  const [prios, setPrios] = React.useState({
+    Lowest: true,
+    Low: true,
+    Medium: true,
+    High: true,
+    Highest: true,
+    Critical: true
+  });
+  const changePrios = e => {
+    const v = {...prios};
+
+    v[e.target.value] = e.target.checked;
+    setPrios(v);
+  };
+
   const drawChart = report => {
     if (_.isEmpty(report)) {
       return null;
@@ -84,14 +113,33 @@ const app = ({generateCfdReport, report}) => {
             </RadioGroup>
           </FormControl>
         </Box>
-        <FormControl component="fieldset">
-          <FormLabel>Items: </FormLabel>
-          <FormControlLabel value="Story" label="Story"
-                            control={<Checkbox onChange={changeItems} checked={items.Story}/>}/>
-          <FormControlLabel value="Bug" label="Bug" control={<Checkbox onChange={changeItems} checked={items.Bug}/>}/>
-        </FormControl>
         <Box>
-          <Button variant="contained" color="primary" onClick={() => generateCfdReport(interval, items)}>
+          <FormControl component="fieldset">
+            <FormLabel>Items: </FormLabel>
+            <FormControlLabel value="Story" label="Story"
+                              control={<Checkbox onChange={changeItems} checked={items.Story}/>}/>
+            <FormControlLabel value="Bug" label="Bug" control={<Checkbox onChange={changeItems} checked={items.Bug}/>}/>
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl component="fieldset">
+            <FormLabel>Priorities: </FormLabel>
+            <FormControlLabel value="Critical" label="Critical"
+                              control={<Checkbox onChange={changePrios} checked={prios.Critical}/>}/>
+            <FormControlLabel value="Highest" label="Highest"
+                              control={<Checkbox onChange={changePrios} checked={prios.Highest}/>}/>
+            <FormControlLabel value="High" label="High"
+                              control={<Checkbox onChange={changePrios} checked={prios.High}/>}/>
+            <FormControlLabel value="Medium" label="Medium"
+                              control={<Checkbox onChange={changePrios} checked={prios.Medium}/>}/>
+            <FormControlLabel value="Low" label="Low"
+                              control={<Checkbox onChange={changePrios} checked={prios.Low}/>}/>
+            <FormControlLabel value="Lowest" label="Lowest"
+                              control={<Checkbox onChange={changePrios} checked={prios.Lowest}/>}/>
+          </FormControl>
+        </Box>
+        <Box>
+          <Button variant="contained" color="primary" onClick={() => generateCfdReport(interval, items, prios)}>
             Generate
           </Button>
         </Box>
@@ -99,8 +147,8 @@ const app = ({generateCfdReport, report}) => {
           {drawChart(report)}
         </Box>
       </Grid>
-      <Grid item xs={10}>
-        <ResponsiveContainer width="100%" height={500}>
+      <Grid item xs={5}>
+        <ResponsiveContainer width="100%" height={800}>
           <AreaChart data={report}>
             <XAxis dataKey="created"/>
             {series.todo ? <Area type="step" dataKey="To Do cumulative"/> : null}
@@ -110,6 +158,38 @@ const app = ({generateCfdReport, report}) => {
             <Tooltip/>
           </AreaChart>
         </ResponsiveContainer>
+      </Grid>
+      <Grid item xs={5}>
+        <div style={{overflow: 'auto', maxHeight: 800}}>
+          <Table size="small" stickyHeader={true}>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Created</TableCell>
+                <TableCell align="right">To Do</TableCell>
+                <TableCell align="right">Done</TableCell>
+                <TableCell align="right">WIP</TableCell>
+                <TableCell align="right">CT</TableCell>
+                <TableCell align="right">TH</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                report
+                  .map(r => (
+                      <TableRow>
+                        <TableCell align="center">{r.created}</TableCell>
+                        <TableCell align="right">{r['To Do cumulative']}</TableCell>
+                        <TableCell align="right">{r['Done cumulative']}</TableCell>
+                        <TableCell align="right">{r['WIP cumulative']}</TableCell>
+                        <TableCell align="right">{r['CT']}</TableCell>
+                        <TableCell align="right">{r['TH'] ? r['TH'].toFixed(2) : null}</TableCell>
+                      </TableRow>
+                    )
+                  )
+              }
+            </TableBody>
+          </Table>
+        </div>
       </Grid>
     </Grid>
   );
@@ -123,12 +203,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  generateCfdReport: (interval, items) => {
+  generateCfdReport: (interval, items, prios) => {
     const itemsParams = Object.keys(items)
       .filter(k => items[k])
       .reduce((a, i) => a + '&item=' + i, '');
+    const priosParams = Object.keys(prios)
+      .filter(k => prios[k])
+      .reduce((a, i) => a + '&prio=' + i, '');
 
-    ajax.get(`http://localhost:8090/oda/api/cfd?interval=${interval}${itemsParams}`)
+    ajax.get(`http://localhost:8090/oda/api/cfd?interval=${interval}${itemsParams}${priosParams}`)
       .subscribe(resp => dispatch(createAction('STORE_CFD_REPORT', resp.response)));
   }
 });
