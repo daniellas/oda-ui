@@ -21,7 +21,7 @@ import {
   TableBody,
   TableHead
 } from '@material-ui/core';
-import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
+import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
@@ -155,6 +155,7 @@ const app = ({generateCfdReport, report}) => {
             {series.done ? <Area type="step" dataKey="Done cumulative"/> : null}
             {series.ct ? <Area type="step" dataKey="CT"/> : null}
             {series.th ? <Area type="step" dataKey="TH"/> : null}
+            <YAxis/>
             <Tooltip/>
           </AreaChart>
         </ResponsiveContainer>
