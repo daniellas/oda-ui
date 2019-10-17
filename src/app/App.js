@@ -25,6 +25,7 @@ import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recha
 import Checkbox from '@material-ui/core/Checkbox';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import {restUrlBase} from "./config/config";
 
 const initialState = {
   report: []
@@ -39,7 +40,7 @@ const reducer = (state = initialState, {type, payload}) => {
   }
 };
 
-const app = ({generateCfdReport, report}) => {
+const app = ({generateCfdReport, downloadJiraData, report}) => {
   const [interval, setInterval] = React.useState('day');
   const changeInterval = e => setInterval(e.target.value);
 
@@ -102,7 +103,7 @@ const app = ({generateCfdReport, report}) => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={5}>
       <Grid item xs={2}>
         <Box>
           <FormControl component="fieldset">
@@ -141,6 +142,9 @@ const app = ({generateCfdReport, report}) => {
         <Box>
           <Button variant="contained" color="primary" onClick={() => generateCfdReport(interval, items, prios)}>
             Generate
+          </Button>
+          <Button variant="contained" color="primary" onClick={downloadJiraData}>
+            Download data
           </Button>
         </Box>
         <Box>
@@ -212,9 +216,11 @@ const mapDispatchToProps = dispatch => ({
       .filter(k => prios[k])
       .reduce((a, i) => a + '&prio=' + i, '');
 
-    ajax.get(`http://localhost:8090/oda/api/cfd?interval=${interval}${itemsParams}${priosParams}`)
+    ajax.get(`${restUrlBase()}/cfd?interval=${interval}${itemsParams}${priosParams}`)
       .subscribe(resp => dispatch(createAction('STORE_CFD_REPORT', resp.response)));
-  }
+  },
+  downloadJiraData: () => ajax.post(`${restUrlBase()}/jira/download`)
+    .subscribe(resp => dispatch(createAction('JIRA_DATA_DOWNLOADED')))
 });
 
 export const App = connect(mapStateToProps, mapDispatchToProps)(app);

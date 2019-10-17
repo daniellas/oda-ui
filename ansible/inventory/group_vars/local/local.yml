@@ -1,0 +1,4 @@
+config:
+  basedir: /home/daniel.las/work/oda-ui
+  ports:
+    - 8091:80
