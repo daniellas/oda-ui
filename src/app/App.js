@@ -58,7 +58,8 @@ const app = ({generateCfdReport, downloadJiraData, report}) => {
     todo: true,
     done: true,
     ct: false,
-    th: false
+    th: false,
+    wip: false
   });
   const changeSeries = e => {
     const v = {...series};
@@ -108,6 +109,8 @@ const app = ({generateCfdReport, downloadJiraData, report}) => {
                           control={<Checkbox onChange={changeSeries} checked={series.ct}/>}/>
         <FormControlLabel value="th" label="Throughput"
                           control={<Checkbox onChange={changeSeries} checked={series.th}/>}/>
+        <FormControlLabel value="wip" label="Work in progress"
+                          control={<Checkbox onChange={changeSeries} checked={series.wip}/>}/>
       </FormControl>
     );
   };
@@ -178,6 +181,7 @@ const app = ({generateCfdReport, downloadJiraData, report}) => {
                 {series.done ? <Area type="step" dataKey="Done cumulative"/> : null}
                 {series.ct ? <Area type="step" dataKey="CT"/> : null}
                 {series.th ? <Area type="step" dataKey="TH"/> : null}
+                {series.wip ? <Area type="step" dataKey="WIP cumulative"/> : null}
                 <YAxis/>
                 <Tooltip/>
               </AreaChart>
