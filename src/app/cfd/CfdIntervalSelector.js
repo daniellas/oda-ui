@@ -3,13 +3,14 @@ import React from 'react';
 import {createAction} from '../store/actionCreators';
 import {selectCfdInterval} from './actionTypes';
 import {connect} from 'react-redux';
+import {intervals} from './cfd';
 
 const CfdIntervalSelector = ({interval, selectInterval}) => (
   <FormControl component="fieldset">
     <FormLabel>Interval:</FormLabel>
-    <RadioGroup name="cycle" value={interval} onChange={e => selectInterval(e.target.value)}>
-      <FormControlLabel value="week" label="Week" control={<Radio/>}/>
-      <FormControlLabel value="day" label="Day" control={<Radio/>}/>
+    <RadioGroup row name="cycle" value={interval} onChange={e => selectInterval(e.target.value)}>
+      <FormControlLabel value={intervals.week} label="Week" control={<Radio/>}/>
+      <FormControlLabel value={intervals.day} label="Day" control={<Radio/>}/>
     </RadioGroup>
   </FormControl>
 );
