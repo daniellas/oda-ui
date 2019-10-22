@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 const drawSeries = (visible, dataKey) => {
   if (visible) {
-    return <Area type="step" dataKey={dataKey}/>;
+    return <Area type="step" dataKey={dataKey} animationDuration={200}/>;
   }
 
   return null;

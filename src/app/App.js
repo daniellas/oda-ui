@@ -8,6 +8,9 @@ import JiraDataDownloader from './jira/JiraDataDownloader';
 import CfdDashboard from './cfd/CfdDashboard';
 import httpReducer from './http/reducer';
 import {connect} from 'react-redux';
+import Drawer from '@material-ui/core/Drawer';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles(theme => ({
   offset: {
@@ -30,16 +33,27 @@ const toggleProgress = (visible, clsName) => {
 
 const app = ({progressVisible}) => {
   const classes = useStyles();
+  const [drawerOpen, setOpen] = React.useState(false);
+  const toggleDrawer = () => setOpen(false);
 
   return (
     <Container maxWidth={false}>
       <AppBar position="fixed">
         {toggleProgress(progressVisible, classes.progress)}
         <Toolbar>
+          <IconButton
+            color="inherit"
+            onClick={toggleDrawer}
+            edge="start">
+            <MenuIcon/>
+          </IconButton>
           <JiraDataDownloader/>
         </Toolbar>
       </AppBar>
       <div className={classes.offset}/>
+      <Drawer variant="persistent" open={drawerOpen}>
+        aaa
+      </Drawer>
       <Grid container>
         <CfdDashboard/>
       </Grid>
