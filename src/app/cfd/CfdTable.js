@@ -3,33 +3,32 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import React from 'react';
 import {connect} from 'react-redux';
+import {xAxisKey} from './cfd';
 
-const CfdTable = ({data}) => {
+const drawHeaders = series => series.map(s => <TableCell align="right" key={s.value}>{s.value}</TableCell>);
+const drawDataCols = (series, data) => series
+  .map(s => <TableCell align="right" key={s.value}>{data[s.value]}</TableCell>);
+
+const CfdTable = ({data, series}) => {
   if (!data || !data.length) return null;
 
   return (
     <Table size="small" stickyHeader={true}>
       <TableHead>
         <TableRow>
-          <TableCell align="center">Created</TableCell>
-          <TableCell align="right">To Do</TableCell>
-          <TableCell align="right">Done</TableCell>
-          <TableCell align="right">WIP</TableCell>
-          <TableCell align="right">CT</TableCell>
-          <TableCell align="right">TH</TableCell>
+          <TableCell align="center">{xAxisKey}</TableCell>
+          {drawHeaders(series)}
         </TableRow>
       </TableHead>
       <TableBody>
         {
           data
+            .slice()
+            .reverse()
             .map(r => (
-                <TableRow key={r.created}>
-                  <TableCell align="center">{r.created}</TableCell>
-                  <TableCell align="right">{r['To Do cumulative']}</TableCell>
-                  <TableCell align="right">{r['Done cumulative']}</TableCell>
-                  <TableCell align="right">{r['WIP cumulative']}</TableCell>
-                  <TableCell align="right">{r['CT']}</TableCell>
-                  <TableCell align="right">{r['TH'] ? r['TH'].toFixed(2) : null}</TableCell>
+                <TableRow key={r[xAxisKey]}>
+                  <TableCell align="center">{r[xAxisKey]}</TableCell>
+                  {drawDataCols(series, r)}
                 </TableRow>
               )
             )
@@ -40,7 +39,8 @@ const CfdTable = ({data}) => {
 };
 
 const mapStateToProps = state => ({
-  data: state.cfd.data
+  data: state.cfd.data,
+  series: state.cfd.series
 });
 
 export default connect(mapStateToProps)(CfdTable);

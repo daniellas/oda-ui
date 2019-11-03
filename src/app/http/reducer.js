@@ -4,7 +4,7 @@ const initialState = {
   httpInProgress: false
 };
 
-const httpReducer = (state = initialState, {type}) => {
+const httpReducer = (state = initialState, {type, payload}) => {
   switch (type) {
     case httpRequestStart:
       return {httpInProgress: true};

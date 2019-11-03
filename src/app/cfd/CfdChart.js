@@ -1,27 +1,18 @@
-import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
 import React from 'react';
 import {connect} from 'react-redux';
+import {xAxisKey} from './cfd';
 
-const drawSeries = (visible, dataKey) => {
-  if (visible) {
-    return <Area type="step" dataKey={dataKey} animationDuration={200}/>;
-  }
+const drawSeries = dataKey => (<Area type="step" dataKey={dataKey} animationDuration={200} key={dataKey}/>);
 
-  return null;
-};
 const CfdChart = ({data, series, width, height}) => {
   if (!data || !data.length) return null;
 
   return (
     <ResponsiveContainer width={width} height={height}>
       <AreaChart data={data}>
-        <XAxis dataKey="created"/>
-        {drawSeries(series.todo, 'To Do cumulative')}
-        {drawSeries(series.done, 'Done cumulative')}
-        {drawSeries(series.ct, 'CT')}
-        {drawSeries(series.th, 'TH')}
-        {drawSeries(series.wip, 'WIP cumulative')}
-        <YAxis/>
+        <XAxis dataKey={xAxisKey}/>
+        {series.filter(i => i.checked).map(i => drawSeries(i.value))}
         <Tooltip/>
       </AreaChart>
     </ResponsiveContainer>

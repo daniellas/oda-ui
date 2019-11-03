@@ -13,6 +13,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import {connect} from 'react-redux';
+import JiraProjectSelector from '../jira/JiraProjectSelector';
+import JiraDataDownloader from '../jira/JiraDataDownloader';
+import CfdEntryStateSelector from './CfdEntryStateSelector';
+import CfdFinalStateSelector from './CfdFinalStateSelector';
 
 const CfdDashboard = ({data}) => {
   const [tab, setTab] = React.useState(0);
@@ -53,6 +57,9 @@ const CfdDashboard = ({data}) => {
     <>
       <Grid container direction="column" item xs={2} spacing={1}>
         <Grid item>
+          <JiraProjectSelector minWidth={200}/>
+        </Grid>
+        <Grid item>
           <CfdAggregateSelector/>
         </Grid>
         <Grid item>
@@ -62,6 +69,12 @@ const CfdDashboard = ({data}) => {
           <CfdItemsSelector/>
         </Grid>
         <Grid item>
+          <CfdEntryStateSelector/>
+        </Grid>
+        <Grid item>
+          <CfdFinalStateSelector/>
+        </Grid>
+        <Grid item>
           <CfdPriosSelector/>
         </Grid>
         <Grid item>
@@ -69,6 +82,9 @@ const CfdDashboard = ({data}) => {
         </Grid>
         <Grid item>
           <CfdReportGenerator/>
+        </Grid>
+        <Grid item>
+          <JiraDataDownloader/>
         </Grid>
         <Grid item>
           <CfdSeriesSelector/>
