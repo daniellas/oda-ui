@@ -39,7 +39,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "enzyme": "^3.9.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "source-map-explorer": "^1.7.0"
   },
   "browserslist": [
